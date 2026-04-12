@@ -1,17 +1,10 @@
-# nguyenchicuong_2224802010781_lab1
+# Lab 1: Set up and Create App
 
-A new Flutter project.
+1. Gõ flutter doctor: Kiểm tra môi trường flutter và cài 
+<img width="1707" height="1008" alt="image" src="https://github.com/user-attachments/assets/c4bd2015-9df7-47d8-b258-a3608378b80a" />
 
-## Getting Started
+2. Gõ flutter run: Chạy chương trình
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/e165163f-3535-4c13-aae4-59d4235f749a" />
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
