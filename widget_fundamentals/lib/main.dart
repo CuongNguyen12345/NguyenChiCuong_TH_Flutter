@@ -41,7 +41,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Scaffold(body: Center(child: Tile('A', HitType.miss))),
+      home: Scaffold(body: Center(child: Tile('A', HitType.partial))),
     );
   }
 }
