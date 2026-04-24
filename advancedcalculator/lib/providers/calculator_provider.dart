@@ -75,7 +75,7 @@ class CalculatorProvider extends ChangeNotifier {
         memoryClear();
         return;
       case 'MR':
-        _appendValue(_memory.toString());
+        memoryRecall();
         return;
       case 'M+':
         memoryAdd();
@@ -89,10 +89,14 @@ class CalculatorProvider extends ChangeNotifier {
       case 'x²':
         _appendValue('^2');
         return;
+      case 'x^y':
+        _appendOperator('^');
+        return;
       case '√':
         _appendValue('sqrt(');
         return;
       case 'π':
+      case 'П':
         _appendValue('π');
         return;
       case '÷':
@@ -111,9 +115,11 @@ class CalculatorProvider extends ChangeNotifier {
       case 'NOT':
         _appendValue('NOT(');
         return;
+      case '2nd':
+        return;
       default:
-        if (<String>{'sin', 'cos', 'tan', 'ln', 'log'}.contains(value)) {
-          _appendValue('$value(');
+        if (<String>{'sin', 'cos', 'tan', 'ln', 'log', 'Ln'}.contains(value)) {
+          _appendValue('${value.toLowerCase()}(');
           return;
         }
         _appendValue(value);
@@ -172,28 +178,47 @@ class CalculatorProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> memoryAdd() async {
-    _memory += _lastEvaluatedValue;
-    _hasMemory = _memory != 0;
-    await _storageService.saveMemoryValue(_memory);
+  void memoryAdd() {
+    _memory += double.parse(_result);
+    _hasMemory = true;
+    _storageService.saveMemoryValue(_memory);
     notifyListeners();
   }
 
-  Future<void> memorySubtract() async {
-    _memory -= _lastEvaluatedValue;
+  void memorySubtract() {
+    _memory -= double.parse(_result);
     _hasMemory = _memory != 0;
-    await _storageService.saveMemoryValue(_memory);
+    _storageService.saveMemoryValue(_memory);
     notifyListeners();
   }
 
-  Future<void> memoryClear() async {
+  void memoryRecall() {
+    _expression = _memory.toString();
+    _result = _memory.toString();
+    notifyListeners();
+  }
+
+  void memoryClear() {
     _memory = 0;
     _hasMemory = false;
-    await _storageService.saveMemoryValue(_memory);
+    _storageService.saveMemoryValue(_memory);
     notifyListeners();
   }
 
   void _appendValue(String value) {
+    if (value.length == 1 && RegExp(r'[0-9]').hasMatch(value)) {
+      if (_expression == '0') {
+        _expression = value;
+        notifyListeners();
+        return;
+      }
+      final RegExp leadingZeroRegex = RegExp(r'(^|[÷×+\-%^()]|AND|OR|XOR|NOT|<<|>>)0$');
+      if (leadingZeroRegex.hasMatch(_expression)) {
+        _expression = _expression.substring(0, _expression.length - 1) + value;
+        notifyListeners();
+        return;
+      }
+    }
     _expression += value;
     notifyListeners();
   }

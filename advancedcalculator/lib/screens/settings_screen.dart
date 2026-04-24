@@ -110,7 +110,28 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           FilledButton.tonal(
-            onPressed: onClearHistory,
+            onPressed: () async {
+              final bool? confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Clear History'),
+                  content: const Text('Are you sure you want to clear all history?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Clear'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirm == true) {
+                onClearHistory();
+              }
+            },
             child: const Text('Clear all history'),
           ),
         ],

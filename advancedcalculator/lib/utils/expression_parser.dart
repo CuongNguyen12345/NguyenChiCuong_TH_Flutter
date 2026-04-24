@@ -45,6 +45,7 @@ enum _TokenType {
   or,
   xor,
   not,
+  sqrt,
 }
 
 class _Token {
@@ -178,6 +179,9 @@ class _Tokenizer {
           break;
         case '~':
           tokens.add(const _Token(_TokenType.not, '~'));
+          break;
+        case '√':
+          tokens.add(const _Token(_TokenType.sqrt, '√'));
           break;
         default:
           throw FormatException('Unknown token: $char');
@@ -380,6 +384,13 @@ class _Parser {
     }
     if (stream.match(_TokenType.not)) {
       return (~_toInt(_parseUnary())).toDouble();
+    }
+    if (stream.match(_TokenType.sqrt)) {
+      final double value = _parseUnary();
+      if (value < 0) {
+        throw const FormatException('Invalid input');
+      }
+      return math.sqrt(value);
     }
     return _parsePostfix();
   }

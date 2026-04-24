@@ -30,6 +30,11 @@ class HistoryProvider extends ChangeNotifier {
     if (expression.trim().isEmpty) {
       return;
     }
+    if (_history.isNotEmpty && 
+        _history.first.expression == expression && 
+        _history.first.result == result) {
+      return;
+    }
     _history.insert(
       0,
       CalculationHistory(

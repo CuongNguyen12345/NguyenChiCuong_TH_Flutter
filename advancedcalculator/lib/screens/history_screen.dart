@@ -41,8 +41,7 @@ class HistoryScreen extends StatelessWidget {
                   ),
                   tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   title: Text(item.expression),
-                  subtitle: Text(DateFormat('dd/MM/yyyy HH:mm').format(item.timestamp)),
-                  trailing: Text(item.result),
+                  trailing: Text(item.result, style: const TextStyle(fontWeight: FontWeight.bold)),
                   onTap: () {
                     onReuse(item);
                     Navigator.of(context).pop();
