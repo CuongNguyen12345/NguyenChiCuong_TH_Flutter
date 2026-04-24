@@ -1,63 +1,70 @@
 import 'package:flutter/material.dart';
-import 'calculator_button.dart';
+
+import '../models/calculator_mode.dart';
+import '../utils/calculator_logic.dart';
 import '../utils/constants.dart';
+import 'calculator_button.dart';
 
 class ButtonGrid extends StatelessWidget {
-  final Function(String) onButtonPressed;
-
   const ButtonGrid({
     super.key,
+    required this.mode,
     required this.onButtonPressed,
+    required this.onButtonLongPressed,
   });
+
+  final CalculatorMode mode;
+  final ValueChanged<String> onButtonPressed;
+  final ValueChanged<String> onButtonLongPressed;
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
-    Color accentColor = isDark ? AppColors.darkAccent : AppColors.lightAccent;
-
-    return Column(
-      children: [
-        _buildRow(['AC', '(', ')', '/'], accentColor, isDark),
-        _buildRow(['7', '8', '9', 'x'], accentColor, isDark, isOperatorRow: true),
-        _buildRow(['4', '5', '6', '-'], accentColor, isDark, isOperatorRow: true),
-        _buildRow(['1', '2', '3', '+'], accentColor, isDark, isOperatorRow: true),
-        _buildRow(['00', '0', '.', '='], accentColor, isDark, isLastRow: true),
-      ],
+    final List<String> buttons = CalculatorLayout.buttonsForMode(mode);
+    final int crossAxisCount = CalculatorLayout.crossAxisCount(mode);
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(AppDesign.screenPadding),
+      itemCount: buttons.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: AppDesign.buttonSpacing,
+        mainAxisSpacing: AppDesign.buttonSpacing,
+        childAspectRatio: mode == CalculatorMode.basic ? 1.15 : 1.1,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        final String label = buttons[index];
+        return GestureDetector(
+          onLongPress: label == 'C' ? () => onButtonLongPressed(label) : null,
+          child: CalculatorButton(
+            label: label,
+            isAccent: _isAccentButton(label),
+            onPressed: () => onButtonPressed(label),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildRow(List<String> labels, Color accent, bool isDark, {bool isOperatorRow = false, bool isLastRow = false}) {
-    return Expanded(
-      child: Row(
-        children: labels.map((label) {
-          Color? bgColor;
-          Color? textColor;
-          
-          // Operator buttons and special functional buttons
-          bool isSpecial = ['AC', '(', ')', '/', 'x', '-', '+', '=', 'DEL'].contains(label);
-          
-          if (isSpecial) {
-            bgColor = accent;
-            textColor = Colors.white;
-          } else {
-            // Number buttons
-            bgColor = isDark ? AppColors.darkSecondary : AppColors.lightSecondary;
-            textColor = Colors.white.withOpacity(0.9);
-          }
-
-          // Special case for '=' to make it standout if needed (optional)
-          if (label == '=') {
-            // You can make '=' buttons even more prominent here if you want
-          }
-
-          return CalculatorButton(
-            label: label,
-            onPressed: () => onButtonPressed(label),
-            backgroundColor: bgColor,
-            textColor: textColor,
-          );
-        }).toList(),
-      ),
-    );
+  bool _isAccentButton(String label) {
+    const Set<String> accentLabels = <String>{
+      'C',
+      'CE',
+      '=',
+      '÷',
+      '×',
+      '+',
+      '-',
+      'AND',
+      'OR',
+      'XOR',
+      'NOT',
+      '<<',
+      '>>',
+      'M+',
+      'M-',
+      'MR',
+      'MC',
+    };
+    return accentLabels.contains(label);
   }
 }

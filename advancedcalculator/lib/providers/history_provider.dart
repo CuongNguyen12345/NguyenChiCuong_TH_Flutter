@@ -1,33 +1,62 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
-class HistoryItem {
-  final String expression;
-  final String result;
-  final DateTime time;
+import '../models/calculation_history.dart';
+import '../services/storage_service.dart';
 
-  HistoryItem({
-    required this.expression,
-    required this.result,
-    required this.time,
-  });
-}
+class HistoryProvider extends ChangeNotifier {
+  HistoryProvider({
+    required StorageService storageService,
+    int maxEntries = 50,
+  })  : _storageService = storageService,
+        _maxEntries = maxEntries;
 
-class HistoryProvider with ChangeNotifier {
-  final List<HistoryItem> _history = [];
+  final StorageService _storageService;
+  final List<CalculationHistory> _history = <CalculationHistory>[];
+  int _maxEntries;
 
-  List<HistoryItem> get history => List.unmodifiable(_history);
+  List<CalculationHistory> get history => List.unmodifiable(_history);
 
-  void addEntry(String expression, String result) {
-    _history.insert(0, HistoryItem(
-      expression: expression,
-      result: result,
-      time: DateTime.now(),
-    ));
+  Future<void> loadHistory() async {
+    _history
+      ..clear()
+      ..addAll(await _storageService.loadHistory());
     notifyListeners();
   }
 
-  void clearHistory() {
+  Future<void> addEntry({
+    required String expression,
+    required String result,
+  }) async {
+    if (expression.trim().isEmpty) {
+      return;
+    }
+    _history.insert(
+      0,
+      CalculationHistory(
+        expression: expression,
+        result: result,
+        timestamp: DateTime.now(),
+      ),
+    );
+    if (_history.length > _maxEntries) {
+      _history.removeRange(_maxEntries, _history.length);
+    }
+    await _storageService.saveHistory(_history);
+    notifyListeners();
+  }
+
+  Future<void> clearHistory() async {
     _history.clear();
+    await _storageService.saveHistory(_history);
+    notifyListeners();
+  }
+
+  Future<void> setMaxEntries(int maxEntries) async {
+    _maxEntries = maxEntries;
+    if (_history.length > _maxEntries) {
+      _history.removeRange(_maxEntries, _history.length);
+      await _storageService.saveHistory(_history);
+    }
     notifyListeners();
   }
 }

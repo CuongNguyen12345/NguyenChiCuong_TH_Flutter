@@ -1,45 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:lab3/screens/calculator_screen.dart';
-import 'package:lab3/providers/calculator_provider.dart';
-import 'package:lab3/providers/theme_provider.dart';
-import 'package:lab3/providers/history_provider.dart';
 
-void main() {
+import 'models/calculator_settings.dart';
+import 'providers/calculator_provider.dart';
+import 'providers/history_provider.dart';
+import 'providers/theme_provider.dart';
+import 'screens/calculator_screen.dart';
+import 'services/storage_service.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final StorageService storageService = StorageService();
+  final CalculatorSettings settings = await storageService.loadSettings();
+  final double memory = await storageService.loadMemoryValue();
+
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CalculatorProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => HistoryProvider()),
-      ],
-      child: const MyApp(),
+    MyApp(
+      storageService: storageService,
+      initialSettings: settings,
+      initialMemory: memory,
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({
+    super.key,
+    required this.storageService,
+    required this.initialSettings,
+    required this.initialMemory,
+  });
+
+  final StorageService storageService;
+  final CalculatorSettings initialSettings;
+  final double initialMemory;
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final HistoryProvider _historyProvider = HistoryProvider(
+    storageService: widget.storageService,
+    maxEntries: widget.initialSettings.historySize,
+  )..loadHistory();
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
-    return MaterialApp(
-      title: 'Modern Calculator',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        useMaterial3: true,
-        fontFamily: 'Roboto',
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (_) =>
+              ThemeProvider(initialThemeMode: widget.initialSettings.themeMode),
+        ),
+        ChangeNotifierProvider<CalculatorProvider>(
+          create: (_) => CalculatorProvider(
+            storageService: widget.storageService,
+            initialSettings: widget.initialSettings,
+            initialMemory: widget.initialMemory,
+          ),
+        ),
+        ChangeNotifierProvider<HistoryProvider>.value(value: _historyProvider),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (_, ThemeProvider themeProvider, _) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            themeMode: themeProvider.themeMode,
+            theme: themeProvider.lightTheme,
+            darkTheme: themeProvider.darkTheme,
+            home: const CalculatorScreen(),
+          );
+        },
       ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        useMaterial3: true,
-        fontFamily: 'Roboto',
-      ),
-      themeMode: themeProvider.themeMode,
-      home: const CalculatorScreen(),
     );
   }
 }

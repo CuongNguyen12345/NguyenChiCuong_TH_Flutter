@@ -1,107 +1,241 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/display_area.dart';
-import '../widgets/button_grid.dart';
-import '../providers/calculator_provider.dart';
-import '../providers/theme_provider.dart';
-import '../providers/history_provider.dart';
-import '../utils/constants.dart';
 
-class CalculatorScreen extends StatefulWidget {
+import '../models/calculation_history.dart';
+import '../models/calculator_mode.dart';
+import '../models/calculator_settings.dart';
+import '../providers/calculator_provider.dart';
+import '../providers/history_provider.dart';
+import '../providers/theme_provider.dart';
+import '../utils/constants.dart';
+import '../widgets/button_grid.dart';
+import '../widgets/display_area.dart';
+import '../widgets/mode_selector.dart';
+import 'history_screen.dart';
+import 'settings_screen.dart';
+
+class CalculatorScreen extends StatelessWidget {
   const CalculatorScreen({super.key});
 
   @override
-  State<CalculatorScreen> createState() => _CalculatorScreenState();
+  Widget build(BuildContext context) {
+    return Consumer2<CalculatorProvider, HistoryProvider>(
+      builder: (
+        BuildContext context,
+        CalculatorProvider calculator,
+        HistoryProvider history,
+        _,
+      ) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Advanced Calculator'),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () => _openHistory(context, history.history),
+                icon: const Icon(Icons.history_rounded),
+              ),
+              IconButton(
+                onPressed: () => _openSettings(context, calculator.settings),
+                icon: const Icon(Icons.settings_rounded),
+              ),
+              IconButton(
+                onPressed: context.read<ThemeProvider>().toggleTheme,
+                icon: const Icon(Icons.brightness_6_rounded),
+              ),
+            ],
+          ),
+          body: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[
+                  Color(0xFFF6F1EB),
+                  Color(0xFFE7F1ED),
+                ],
+              ),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(AppDesign.screenPadding),
+                child: Column(
+                  children: <Widget>[
+                    ModeSelector(
+                      currentMode: calculator.mode,
+                      onChanged: calculator.setMode,
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      flex: 4,
+                      child: GestureDetector(
+                        onHorizontalDragEnd: (_) => calculator.deleteLast(),
+                        onVerticalDragEnd: (DragEndDetails details) {
+                          if ((details.primaryVelocity ?? 0) < 0) {
+                            _openHistory(context, history.history);
+                          }
+                        },
+                        child: DisplayArea(
+                          expression: calculator.expression,
+                          result: calculator.result,
+                          previousResult: calculator.previousResult,
+                          mode: calculator.mode,
+                          angleMode: calculator.angleMode,
+                          hasMemory: calculator.hasMemory,
+                          errorMessage: calculator.errorMessage,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 90,
+                      child: _HistoryPreview(
+                        history: history.history.take(3).toList(),
+                        onReuse: (CalculationHistory item) {
+                          calculator.useHistoryExpression(item.expression);
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      flex: 7,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: ButtonGrid(
+                          key: ValueKey<CalculatorMode>(calculator.mode),
+                          mode: calculator.mode,
+                          onButtonPressed: (String label) async {
+                            if (label == '=') {
+                              final String? result = await calculator.calculate();
+                              if (result != null) {
+                                await history.addEntry(
+                                  expression: calculator.expression,
+                                  result: result,
+                                );
+                              }
+                              return;
+                            }
+                            calculator.input(label);
+                          },
+                          onButtonLongPressed: (_) async {
+                            await history.clearHistory();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openHistory(
+    BuildContext context,
+    List<CalculationHistory> history,
+  ) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => HistoryScreen(
+          history: history,
+          onReuse: (CalculationHistory item) {
+            context.read<CalculatorProvider>().useHistoryExpression(item.expression);
+          },
+          onClear: () async {
+            final HistoryProvider historyProvider = context.read<HistoryProvider>();
+            final NavigatorState navigator = Navigator.of(context);
+            await historyProvider.clearHistory();
+            navigator.pop();
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openSettings(
+    BuildContext context,
+    CalculatorSettings settings,
+  ) async {
+    final CalculatorProvider calculatorProvider =
+        context.read<CalculatorProvider>();
+    final HistoryProvider historyProvider = context.read<HistoryProvider>();
+    final ThemeProvider themeProvider = context.read<ThemeProvider>();
+
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SettingsScreen(
+          settings: settings,
+          onSettingsChanged: (CalculatorSettings newSettings) async {
+            await calculatorProvider.updateSettings(newSettings);
+            await historyProvider.setMaxEntries(newSettings.historySize);
+            themeProvider.setThemeMode(newSettings.themeMode);
+          },
+          onClearHistory: () async {
+            await historyProvider.clearHistory();
+          },
+        ),
+      ),
+    );
+  }
 }
 
-class _CalculatorScreenState extends State<CalculatorScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Connect history provider to calculator provider
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final history = context.read<HistoryProvider>();
-      context.read<CalculatorProvider>().updateHistoryProvider(history);
-    });
-  }
+class _HistoryPreview extends StatelessWidget {
+  const _HistoryPreview({
+    required this.history,
+    required this.onReuse,
+  });
+
+  final List<CalculationHistory> history;
+  final ValueChanged<CalculationHistory> onReuse;
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDark = themeProvider.isDarkMode;
-    final scaffoldBg = isDark ? AppColors.darkPrimary : AppColors.lightPrimary;
-
-    return Scaffold(
-      backgroundColor: scaffoldBg,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          'Calculator',
-          style: AppDesign.historyTextStyle.copyWith(
-            color: Colors.white.withOpacity(0.8),
-            fontWeight: FontWeight.bold,
-          ),
+    if (history.isEmpty) {
+      return Center(
+        child: Text(
+          'Swipe up for history',
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-              color: Colors.white,
+      );
+    }
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: history.length,
+      separatorBuilder: (_, _) => const SizedBox(width: 12),
+      itemBuilder: (BuildContext context, int index) {
+        final CalculationHistory item = history[index];
+        return SizedBox(
+          width: 180,
+          child: InkWell(
+            onTap: () => onReuse(item),
+            borderRadius: BorderRadius.circular(20),
+            child: Ink(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    item.expression,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    item.result,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
             ),
-            onPressed: () => themeProvider.toggleTheme(),
           ),
-          IconButton(
-            icon: const Icon(Icons.history, color: Colors.white),
-            onPressed: () {
-              // Navigate to history screen (if implemented)
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('History feature coming soon!')),
-              );
-            },
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDesign.screenPadding),
-          child: Column(
-            children: [
-              // Display Area with better spacing
-              const SizedBox(height: 10),
-              Expanded(
-                flex: 3,
-                child: Consumer<CalculatorProvider>(
-                  builder: (context, provider, child) {
-                    return DisplayArea(
-                      expression: provider.expression.isEmpty ? '0' : provider.expression,
-                      result: provider.result,
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 30),
-              // Separator line (optional for modern look)
-              Container(
-                height: 1,
-                width: double.infinity,
-                color: Colors.white.withOpacity(0.1),
-              ),
-              const SizedBox(height: 30),
-              // Button Grid
-              Expanded(
-                flex: 7,
-                child: ButtonGrid(
-                  onButtonPressed: (label) {
-                    context.read<CalculatorProvider>().append(label);
-                  },
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
