@@ -165,7 +165,6 @@ class CalculatorScreen extends StatelessWidget {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => SettingsScreen(
-          settings: settings,
           onSettingsChanged: (CalculatorSettings newSettings) async {
             await calculatorProvider.updateSettings(newSettings);
             await historyProvider.setMaxEntries(newSettings.historySize);

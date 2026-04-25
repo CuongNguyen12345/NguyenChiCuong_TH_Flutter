@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/calculator_mode.dart';
 import '../models/calculator_settings.dart';
+import '../providers/calculator_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({
     super.key,
-    required this.settings,
     required this.onSettingsChanged,
     required this.onClearHistory,
   });
 
-  final CalculatorSettings settings;
   final ValueChanged<CalculatorSettings> onSettingsChanged;
   final VoidCallback onClearHistory;
 
   @override
   Widget build(BuildContext context) {
+    final CalculatorSettings settings = context.watch<CalculatorProvider>().settings;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
