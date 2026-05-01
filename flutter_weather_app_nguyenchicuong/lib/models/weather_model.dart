@@ -18,6 +18,13 @@ class WeatherModel {
   final double? uvIndex;
   final DateTime? sunrise;
   final DateTime? sunset;
+  final int? usEpaAqi;
+  final double? pm25;
+  final double? pm10;
+  final double? carbonMonoxide;
+  final double? nitrogenDioxide;
+  final double? ozone;
+  final double? sulfurDioxide;
 
   WeatherModel({
     required this.cityName,
@@ -39,9 +46,18 @@ class WeatherModel {
     this.uvIndex,
     this.sunrise,
     this.sunset,
+    this.usEpaAqi,
+    this.pm25,
+    this.pm10,
+    this.carbonMonoxide,
+    this.nitrogenDioxide,
+    this.ozone,
+    this.sulfurDioxide,
   });
 
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
+    final airQuality = json['air_quality'] as Map<String, dynamic>? ?? {};
+
     return WeatherModel(
       cityName: json['name']?.toString() ?? 'Unknown',
       country: json['sys']?['country']?.toString() ?? '--',
@@ -68,6 +84,13 @@ class WeatherModel {
       sunset: json['sys']?['sunset'] == null
           ? null
           : DateTime.fromMillisecondsSinceEpoch((json['sys']['sunset'] as int) * 1000),
+      usEpaAqi: (airQuality['us-epa-index'] as num?)?.toInt(),
+      pm25: (airQuality['pm2_5'] as num?)?.toDouble(),
+      pm10: (airQuality['pm10'] as num?)?.toDouble(),
+      carbonMonoxide: (airQuality['co'] as num?)?.toDouble(),
+      nitrogenDioxide: (airQuality['no2'] as num?)?.toDouble(),
+      ozone: (airQuality['o3'] as num?)?.toDouble(),
+      sulfurDioxide: (airQuality['so2'] as num?)?.toDouble(),
     );
   }
 
@@ -106,6 +129,15 @@ class WeatherModel {
       'visibility': visibility,
       'clouds': {'all': cloudiness},
       'uvi': uvIndex,
+      'air_quality': {
+        'us-epa-index': usEpaAqi,
+        'pm2_5': pm25,
+        'pm10': pm10,
+        'co': carbonMonoxide,
+        'no2': nitrogenDioxide,
+        'o3': ozone,
+        'so2': sulfurDioxide,
+      },
     };
   }
 }

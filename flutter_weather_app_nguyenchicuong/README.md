@@ -13,6 +13,10 @@ Note: API integration is intentionally left in mock mode (`WeatherService(useMoc
 - Forecast
   - Hourly forecast (next 24 hours)
   - Daily forecast summary (next 5-7 days)
+- Air quality
+  - US EPA AQI level
+  - Pollutant levels (PM2.5, PM10, CO, NO2, O3, SO2)
+  - Health recommendation by AQI level
 - Search and location
   - Search by city
   - Automatic location weather (with permission handling)
@@ -118,14 +122,14 @@ Included tests:
 
 - Real API HTTP calls are not wired yet (mock data mode is active).
 - Language switching is preference-only in this version (UI strings not localized yet).
-- No severe weather alert or AQI integration yet.
+- No severe weather alert integration yet.
 
 ## Future Improvements
 
 - OpenWeatherMap live integration
 - API fallback strategy
 - Weather alerts/notifications
-- AQI and map layers
+- Weather map layers
 - Home screen widgets
 
 ## Screenshots

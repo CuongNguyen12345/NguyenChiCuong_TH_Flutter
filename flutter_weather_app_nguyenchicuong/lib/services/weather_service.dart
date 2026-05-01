@@ -154,7 +154,7 @@ class WeatherService {
     final url = ApiConfig.buildUrl(ApiConfig.forecast, {
       'q': query,
       'days': days,
-      'aqi': 'no',
+      'aqi': 'yes',
       'alerts': 'no',
     });
 
@@ -224,6 +224,7 @@ class WeatherService {
         : <String, dynamic>{};
     final day = today['day'] as Map<String, dynamic>? ?? {};
     final astro = today['astro'] as Map<String, dynamic>? ?? {};
+    final airQuality = current['air_quality'] as Map<String, dynamic>? ?? {};
 
     final date = DateTime.fromMillisecondsSinceEpoch(
       ((location['localtime_epoch'] as num?)?.toInt() ??
@@ -252,6 +253,13 @@ class WeatherService {
       uvIndex: (current['uv'] as num?)?.toDouble(),
       sunrise: _parseAstroTime(astro['sunrise']?.toString(), date),
       sunset: _parseAstroTime(astro['sunset']?.toString(), date),
+      usEpaAqi: (airQuality['us-epa-index'] as num?)?.toInt(),
+      pm25: (airQuality['pm2_5'] as num?)?.toDouble(),
+      pm10: (airQuality['pm10'] as num?)?.toDouble(),
+      carbonMonoxide: (airQuality['co'] as num?)?.toDouble(),
+      nitrogenDioxide: (airQuality['no2'] as num?)?.toDouble(),
+      ozone: (airQuality['o3'] as num?)?.toDouble(),
+      sulfurDioxide: (airQuality['so2'] as num?)?.toDouble(),
     );
   }
 
