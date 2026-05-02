@@ -2,8 +2,6 @@
 
 Weather application for Lab 4 with full architecture and required screens/features.
 
-Note: API integration is intentionally left in mock mode (`WeatherService(useMockData: true)`) so real API calls can be plugged in later.
-
 ## Features
 
 - Current weather display
@@ -121,14 +119,12 @@ Included tests:
 
 ## Known Limitations
 
-- Real API HTTP calls are not wired yet (mock data mode is active).
 - Language switching is preference-only in this version (UI strings not localized yet).
 - No severe weather alert integration yet.
 
 ## Future Improvements
 
 - OpenWeatherMap live integration
-- API fallback strategy
 - Weather alerts/notifications
 - Weather map layers
 - Home screen widgets
@@ -137,10 +133,21 @@ Included tests:
 
 Create and place images in a `screenshots/` folder for submission:
 - clear/sunny
+  <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/1b33a4de-d8ab-4d59-9a80-a4db0704c830" />
+
 - rainy
+  <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/e57349e2-649c-40e0-91e0-db0ba4997f9f" />
+
 - cloudy
-- night
+  <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/07584ce0-1aa5-48fb-b899-d57529069cb0" />
+
+- night mode
+  <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/8e3da7c6-a6ea-4efc-82ab-3a9b39799eba" />
+
 - search screen
+  <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/1c935987-074d-4ccc-8b95-edda83d7034f" />
+
 - forecast screen
-- error state
-- loading state
+  <img width="1080" height="2340" alt="image" src="https://github.com/user-attachments/assets/d425dc1c-7c64-4d5a-8a74-f3b2a2859818" />
+
+
