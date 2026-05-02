@@ -14,9 +14,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await dotenv.load(fileName: '.env');
+    await dotenv.load(fileName: '.env', isOptional: true);
   } catch (_) {
-    // .env is optional in this mock build; API integration can be added later.
+    // Env file is optional in this mock build; API integration can be added later.
   }
 
   runApp(const WeatherApp());
@@ -46,15 +46,29 @@ class WeatherApp extends StatelessWidget {
           ),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Weather App',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1A202C)),
-          scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-          useMaterial3: true,
-        ),
-        home: const HomeScreen(),
+      child: Consumer<WeatherProvider>(
+        builder: (context, provider, _) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Weather App',
+            theme: ThemeData(
+              brightness: Brightness.light,
+              colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1A202C)),
+              scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF90CAF9),
+                brightness: Brightness.dark,
+              ),
+              useMaterial3: true,
+            ),
+            themeMode: provider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            home: const HomeScreen(),
+          );
+        },
       ),
     );
   }

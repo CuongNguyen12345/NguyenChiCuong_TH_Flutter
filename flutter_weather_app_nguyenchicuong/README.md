@@ -31,6 +31,7 @@ Note: API integration is intentionally left in mock mode (`WeatherService(useMoc
   - Temperature unit (C/F)
   - Wind speed unit (m/s, km/h, mph)
   - 12/24h format
+  - Dark mode toggle
   - Language preference (stored)
 - UX states
   - Loading state
@@ -80,7 +81,7 @@ lib/
 
 1. Get a free API key from OpenWeatherMap.
 2. Copy `.env.example` to `.env`.
-3. Put your key in `.env`:
+3. Add your API key to `.env`:
 
 ```env
 OPENWEATHER_API_KEY=your_actual_key_here

@@ -43,32 +43,37 @@ class CurrentWeatherCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${weather.cityName}, ${weather.country}',
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${weather.cityName}, ${weather.country}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    DateFormatter.fullDate(weather.dateTime),
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    DateFormatter.hourLabel(
-                      weather.dateTime,
-                      use24HourFormat: provider.use24HourFormat,
+                    const SizedBox(height: 6),
+                    Text(
+                      DateFormatter.fullDate(weather.dateTime),
+                      style: const TextStyle(color: Colors.white70),
                     ),
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                ],
+                    const SizedBox(height: 2),
+                    Text(
+                      DateFormatter.hourLabel(
+                        weather.dateTime,
+                        use24HourFormat: provider.use24HourFormat,
+                      ),
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               CachedNetworkImage(
                 imageUrl: iconUrl,
                 width: 90,

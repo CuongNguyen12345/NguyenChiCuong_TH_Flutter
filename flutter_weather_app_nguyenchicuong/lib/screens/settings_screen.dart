@@ -70,6 +70,12 @@ class SettingsScreen extends StatelessWidget {
                 onChanged: provider.setUse24HourFormat,
               ),
               const Divider(),
+              SwitchListTile(
+                value: provider.isDarkMode,
+                title: const Text('Dark Mode'),
+                onChanged: provider.setDarkMode,
+              ),
+              const Divider(),
               ListTile(
                 title: const Text('Language (optional)'),
                 subtitle: const Text('Only preference is stored in this lab version.'),

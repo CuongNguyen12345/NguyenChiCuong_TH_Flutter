@@ -35,6 +35,7 @@ class WeatherProvider extends ChangeNotifier {
   WindSpeedUnit _windSpeedUnit = WindSpeedUnit.metersPerSecond;
   bool _use24HourFormat = true;
   String _languageCode = 'en';
+  bool _isDarkMode = false;
 
   StreamSubscription<bool>? _connectivitySubscription;
 
@@ -67,6 +68,7 @@ class WeatherProvider extends ChangeNotifier {
   WindSpeedUnit get windSpeedUnit => _windSpeedUnit;
   bool get use24HourFormat => _use24HourFormat;
   String get languageCode => _languageCode;
+  bool get isDarkMode => _isDarkMode;
 
   Future<void> _initialize() async {
     _favoriteCities = await _storageService.getFavoriteCities();
@@ -75,6 +77,7 @@ class WeatherProvider extends ChangeNotifier {
     _windSpeedUnit = await _storageService.getWindSpeedUnit();
     _use24HourFormat = await _storageService.getUse24HourFormat();
     _languageCode = await _storageService.getLanguageCode();
+    _isDarkMode = await _storageService.getDarkMode();
     _lastUpdate = await _storageService.getLastUpdate();
 
     _connectivitySubscription = _connectivityService.connectionStream.listen((online) {
@@ -269,6 +272,12 @@ class WeatherProvider extends ChangeNotifier {
   Future<void> setLanguageCode(String code) async {
     _languageCode = code;
     await _storageService.saveLanguageCode(code);
+    notifyListeners();
+  }
+
+  Future<void> setDarkMode(bool value) async {
+    _isDarkMode = value;
+    await _storageService.saveDarkMode(value);
     notifyListeners();
   }
 

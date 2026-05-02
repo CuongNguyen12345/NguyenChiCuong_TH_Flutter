@@ -19,6 +19,7 @@ class StorageService {
   static const String _windUnitKey = 'wind_speed_unit';
   static const String _hourFormatKey = 'use_24_hour_format';
   static const String _languageKey = 'language_code';
+  static const String _darkModeKey = 'is_dark_mode';
 
   Future<void> saveWeatherData(WeatherModel weather) async {
     final prefs = await SharedPreferences.getInstance();
@@ -162,5 +163,15 @@ class StorageService {
   Future<String> getLanguageCode() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_languageKey) ?? 'en';
+  }
+
+  Future<void> saveDarkMode(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_darkModeKey, value);
+  }
+
+  Future<bool> getDarkMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_darkModeKey) ?? false;
   }
 }
