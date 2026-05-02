@@ -77,7 +77,7 @@ lib/
 
 ## API Setup
 
-1. Get a free API key from OpenWeatherMap.
+1. Get a free API key from WeatherAPI (`https://www.weatherapi.com/`).
 2. Copy `.env.example` to `.env`.
 3. Add your API key to `.env`:
 
@@ -86,7 +86,7 @@ OPENWEATHER_API_KEY=your_actual_key_here
 WEATHER_API_KEY=your_backup_api_key_here
 ```
 
-4. Integrate real HTTP logic in `lib/services/weather_service.dart` by replacing mock branches where `useMockData` is checked.
+4. Run the app. `WeatherService` already calls live API endpoints.
 
 ## How To Run
 
@@ -99,7 +99,7 @@ flutter run
 
 - Flutter
 - Provider
-- HTTP (prepared for integration)
+- HTTP (live WeatherAPI integration)
 - Geolocator + Geocoding
 - Shared Preferences
 - Connectivity Plus
@@ -121,13 +121,18 @@ Included tests:
 
 - Language switching is preference-only in this version (UI strings not localized yet).
 - No severe weather alert integration yet.
+- No weather map layers yet (radar/temperature/precipitation).
+- No native home-screen widget yet.
+- Multiple locations currently supports favorites only (no swipe/compare view yet).
 
 ## Future Improvements
 
-- OpenWeatherMap live integration
+- API fallback strategy (secondary provider)
 - Weather alerts/notifications
 - Weather map layers
 - Home screen widgets
+- Swipe between favorite locations
+- Compare weather between cities
 
 ## Screenshots
 
