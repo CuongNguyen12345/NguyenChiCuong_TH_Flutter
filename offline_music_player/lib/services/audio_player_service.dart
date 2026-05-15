@@ -115,6 +115,9 @@ class AudioPlayerService extends audio_service.BaseAudioHandler
     await onSkipToPreviousRequested?.call();
   }
 
+  @override
+  Future<void> onTaskRemoved() => stop();
+
   Future<void> setVolume(double volume) =>
       _audioPlayer.setVolume(volume.clamp(0, 1).toDouble());
 
