@@ -131,13 +131,31 @@ updates, playback progress behavior, and basic audio service state.
 
 Before submitting, add screenshots to `screenshots/`:
 
-- `home_library.png`
+- `home_screen.png`
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/8164061e-efcf-4c50-ac7a-166ef597c218" />
+
+
 - `now_playing.png`
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/e4f92b16-4f0c-4692-b287-3516b514675c" />
+
+
 - `mini_player.png`
+<img width="431" height="230" alt="image" src="https://github.com/user-attachments/assets/d1a2e700-da08-4f43-9d09-2e6424078acc" />
+
+  
 - `playlist.png`
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/81988bdc-441b-42a8-a301-5fb1385e8308" />
+
+
 - `search.png`
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/c838714c-2331-43a9-9240-542b2705e097" />
+
+
 - `settings.png`
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/c9af6033-bbde-4b93-b5a2-1bc4e9d9e381" />
+
 - `permission_dialog.png`
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/219df544-a61f-4326-9a44-b682e3f5a8f4" />
 
 ## Known Limitations
 
@@ -146,20 +164,7 @@ Before submitting, add screenshots to `screenshots/`:
 - iOS local music access may require extra device-specific testing.
 - Equalizer, lyrics, visualizer, sleep timer, crossfade, and gapless playback are planned as bonus improvements.
 
-## Submission Notes
 
-Before creating the ZIP file for E-Learning:
-
-```bash
-flutter clean
-```
-
-Do not include `build/`, `.dart_tool/`, or `ios/Pods/` in the submitted archive.
-
-Recommended ZIP name:
-
-```text
-MusicPlayer_[StudentID]_[Name].zip
 ```
 
 Add a submission comment with:
