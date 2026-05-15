@@ -124,8 +124,14 @@ flutter test
 flutter analyze
 ```
 
-Current tests cover duration formatting, model serialization, playlist model
-updates, playback progress behavior, and basic audio service state.
+Current tests cover:
+
+- Duration formatting
+- Song, playlist, and playback state models
+- Song and playlist JSON serialization
+- Storage persistence with mocked `SharedPreferences`
+- Playlist provider create, rename, delete, add, remove, duplicate prevention, and reorder flows
+- Manual real-device scenarios in `test/manual_testing_checklist.md`
 
 ## Screenshots
 

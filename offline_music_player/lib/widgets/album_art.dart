@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:on_audio_query/on_audio_query.dart' as audio_query;
 
 import '../models/song_model.dart';
 import '../utils/color_extractor.dart';
@@ -54,9 +54,9 @@ class AlbumArt extends StatelessWidget {
     }
     final mediaStoreId = int.tryParse(currentSong?.id ?? '');
     if (mediaStoreId != null) {
-      return QueryArtworkWidget(
+      return audio_query.QueryArtworkWidget(
         id: mediaStoreId,
-        type: ArtworkType.AUDIO,
+        type: audio_query.ArtworkType.AUDIO,
         artworkWidth: size,
         artworkHeight: size,
         artworkFit: BoxFit.cover,

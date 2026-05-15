@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'providers/audio_provider.dart';
 import 'providers/playlist_provider.dart';
 import 'providers/theme_provider.dart';
+import 'services/audio_player_service.dart';
 import 'screens/home_screen.dart';
 import 'utils/constants.dart';
 
