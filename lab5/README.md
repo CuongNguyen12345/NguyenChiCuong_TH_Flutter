@@ -97,3 +97,10 @@ Dữ liệu được lưu local trong SQLite file `notes.db`, tại thư mục a
 ## 8. Ghi chú
 - App hiện dùng giao diện sáng, nhẹ nhàng, dễ nhìn.
 - Nếu cần nộp bài, có thể thêm ảnh chụp màn hình phần: danh sách note, thêm note, sửa note, xác nhận xóa.
+
+## 9. Giao diện
+
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/7f6d032a-353a-4c25-88ff-ae865ab1b40f" />
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/c8f77383-8b56-4d3f-871f-d5831f92da5a" />
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/548946ed-6ba2-4f2c-9a6f-3014aa398c0d" />
+<img width="425" height="959" alt="image" src="https://github.com/user-attachments/assets/0c6a0060-ccbc-4f3a-8d48-a29c2509d056" />
